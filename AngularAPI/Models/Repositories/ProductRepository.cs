@@ -23,7 +23,7 @@ namespace AngularAPI.Models.Repositories
         public async Task<IList<Product>> ListAllAsync(string searchTerm, int? brandId, int? categoryId)
 
         {
-            var products= await appDbContext.Products.Include(x => x.ProductCategory).Include(x => x.ProductBrand).ToListAsync(); //appDbContext.Products.Include(x => x.ProductCategory).Include(x => x.ProductBrand) SQL Statemnt "join"
+            var products= await appDbContext.Products.Include(x => x.ProductCategory).Include(x => x.ProductBrand).ToListAsync(); //appDbContext.Products.Include(x => x.ProductCategory).Include(x => x.ProductBrand) -SQL Statemnt "join"
 
             if(searchTerm != null && searchTerm != "")
             {
