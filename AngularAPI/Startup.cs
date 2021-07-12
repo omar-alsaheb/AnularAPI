@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace AngularAPI
 {
     public class Startup
     {
-
+       
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -30,11 +31,18 @@ namespace AngularAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IConnectionMultiplexer>(c =>
+            {
+                var configuration = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"));
+                return ConnectionMultiplexer.Connect(configuration);
+            });
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // To add AutoMapper and run it
             services.AddScoped<IServiceRepository<Product>, ProductRepository>();
             services.AddScoped<IServiceRepository<ProductBrand>, BrandsRepository>();
             services.AddScoped<IServiceRepository<ProductCategory>, CategoryRepository>();
-            services.AddControllers();
+            services.AddScoped<IBasketRepository, BasketRepositories>();
+         
+            services.AddControllers().AddNewtonsoftJson();
             //Omar Added this code 
 
             services.AddDbContext<AppDbContext>(options =>
