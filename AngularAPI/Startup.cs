@@ -1,9 +1,12 @@
 using AngularAPI.Data;
+using AngularAPI.Helpers;
 using AngularAPI.Models;
+using AngularAPI.Models.Identity;
 using AngularAPI.Models.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,10 +52,16 @@ namespace AngularAPI
             {
                 options.UseSqlServer(Configuration.GetConnectionString("constr"));
             });
+
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+
+
+            }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -79,6 +88,8 @@ namespace AngularAPI
             {
                 endpoints.MapControllers();
             });
+
+            MyIdentityDataSeed.SeedData(userManager, roleManager);
         }
     }
 }
